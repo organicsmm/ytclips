@@ -308,7 +308,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     final_output = output_path.replace('.mp4', '_with_subtitles.mp4')
     ffmpeg_cmd = [
         'ffmpeg', '-i', video_path,
-        '-vf', f"ass={ass_file}",
+        '-vf', f"ass='{ass_file.replace('\\\\', '/').replace('\\', '/')}'",
         '-c:a', 'copy',
         '-y',
         final_output

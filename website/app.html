@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClippedAI Studio | Professional Video Clipping SaaS</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#030712',
+                            900: '#0b0f19',
+                            800: '#151b2c',
+                            700: '#1f293d',
+                        },
+                        indigo: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        purple: {
+                            500: '#a855f7',
+                            600: '#9333ea',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #030712;
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.15) 0px, transparent 40%),
+                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.12) 0px, transparent 40%);
+            background-attachment: fixed;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .glass-card:hover {
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-input {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        .glow-input:focus {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: #6366f1;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+            outline: none;
+        }
+        .glow-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(168, 85, 247, 0.5);
+        }
+        .glow-btn:active {
+            transform: translateY(0);
+        }
+        /* Custom Scrollbar for premium feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(3, 7, 18, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.25);
+            border-radius: 99px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.5);
+        }
+        .pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .7; }
+        }
+    </style>
+</head>
+<body class="text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <nav class="border-b border-white/5 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <i class="fas fa-scissors text-white text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">Clipped<span class="text-indigo-500">AI</span></span>
+                    <span class="text-[10px] block font-mono text-slate-500 uppercase tracking-widest leading-none">Studio v1.2</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <!-- Status Badges -->
+                <div class="hidden md:flex items-center gap-4 text-xs font-semibold text-slate-400">
+                    <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></span> API Status: Online</span>
+                    <span class="text-slate-700">|</span>
+                    <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50"></span> Modal: Connected</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="text-xs font-bold text-slate-400 hover:text-white transition-colors bg-white/5 border border-white/5 rounded-xl px-4 py-2 flex items-center gap-1.5">
+                        <i class="fas fa-home"></i> Landing
+                    </a>
+                    <a href="https://github.com/Shaarav4795/ClippedAI" target="_blank" class="h-9 w-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-slate-300 hover:text-white">
+                        <i class="fab fa-github text-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 w-full">
+        
+        <!-- Left Panel: Pipeline Setup (lg:col-span-5) -->
+        <section class="lg:col-span-5 space-y-6">
+            
+            <!-- Credentials Card -->
+            <div class="glass-card rounded-2xl p-6 shadow-2xl relative overflow-hidden group">
+                <div class="absolute -right-10 -top-10 w-24 h-24 bg-purple-500/5 rounded-full blur-xl group-hover:bg-purple-500/10 transition-all"></div>
+                <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2 uppercase tracking-wide">
+                        <i class="fas fa-key text-purple-500"></i> Cloud Tokens & Keys
+                    </h3>
+                    <span class="text-[10px] text-slate-500 font-semibold uppercase font-mono bg-white/5 px-2 py-0.5 rounded">Local</span>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-1.5">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">HuggingFace Token</label>
+                            <span class="text-[10px] text-slate-500 font-semibold">For Smart 9:16 Resizing</span>
+                        </div>
+                        <div class="relative">
+                            <input id="hf-token" type="password" placeholder="hf_..." class="w-full glow-input rounded-xl px-4 py-2.5 text-sm text-slate-200 pl-10">
+                            <i class="fas fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                            <button onclick="toggleVisibility('hf-token')" class="absolute right-3.5 top-3 text-slate-500 hover:text-slate-300">
+                                <i class="fas fa-eye text-xs" id="hf-token-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1.5">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Groq API Key</label>
+                            <span class="text-[10px] text-slate-500 font-semibold font-mono">Free Tier OK</span>
+                        </div>
+                        <div class="relative">
+                            <input id="groq-key" type="password" placeholder="gsk_..." class="w-full glow-input rounded-xl px-4 py-2.5 text-sm text-slate-200 pl-10">
+                            <i class="fas fa-brain absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                            <button onclick="toggleVisibility('groq-key')" class="absolute right-3.5 top-3 text-slate-500 hover:text-slate-300">
+                                <i class="fas fa-eye text-xs" id="groq-key-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import Source Card -->
+            <div class="glass-card rounded-2xl p-6 shadow-2xl space-y-6">
+                <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2 uppercase tracking-wide">
+                        <i class="fas fa-cloud-arrow-down text-indigo-500"></i> Import Media
+                    </h3>
+                </div>
+
+                <!-- Tabs header -->
+                <div class="flex bg-slate-950/60 p-1.5 rounded-xl border border-white/5">
+                    <button id="tab-upload" onclick="switchTab('upload')" class="flex-1 py-2.5 text-center rounded-lg font-bold text-xs text-white transition-all bg-indigo-600/90 shadow-md">
+                        <i class="fas fa-file-video mr-1.5"></i> Upload MP4
+                    </button>
+                    <button id="tab-youtube" onclick="switchTab('youtube')" class="flex-1 py-2.5 text-center rounded-lg font-bold text-xs text-slate-400 hover:text-white transition-all">
+                        <i class="fab fa-youtube mr-1.5 text-red-500"></i> YouTube URL
+                    </button>
+                </div>
+
+                <!-- File Drop Panel -->
+                <div id="panel-upload" class="space-y-4">
+                    <div id="dropzone" class="border border-dashed border-slate-700/60 hover:border-indigo-500/50 rounded-2xl p-8 text-center cursor-pointer transition-all bg-slate-950/20 group relative overflow-hidden">
+                        <input type="file" id="file-input" accept="video/mp4" class="hidden" onchange="handleFileSelect(event)">
+                        <div class="absolute inset-0 bg-indigo-500/[0.01] group-hover:bg-indigo-500/[0.03] transition-colors"></div>
+                        
+                        <div class="h-12 w-12 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-cloud-upload-alt text-xl text-slate-400 group-hover:text-indigo-400 transition-colors"></i>
+                        </div>
+                        <span class="font-bold text-sm text-slate-200 block mb-1">Drag & Drop video file here</span>
+                        <span class="text-xs text-slate-500 block mb-4">Support MP4 container only</span>
+                        <span class="inline-flex bg-indigo-500/10 border border-indigo-500/10 px-3 py-1 rounded-lg text-[10px] font-bold text-indigo-400">Browse Computer</span>
+                    </div>
+                    <div id="file-details" class="hidden bg-slate-950 border border-white/5 rounded-xl p-3 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2 truncate">
+                            <i class="fas fa-file-video text-indigo-400 text-sm"></i>
+                            <span class="truncate font-semibold text-slate-300" id="selected-filename">filename.mp4</span>
+                        </div>
+                        <button onclick="clearSelectedFile()" class="text-slate-500 hover:text-red-400 p-1"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+
+                <!-- YouTube URL Panel -->
+                <div id="panel-youtube" class="hidden space-y-3">
+                    <div class="flex justify-between">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Paste Link</label>
+                        <span class="text-[10px] text-emerald-400 font-semibold flex items-center gap-1"><i class="fas fa-bolt"></i> Direct Instant API Download</span>
+                    </div>
+                    <div class="relative">
+                        <input id="youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=..." class="w-full glow-input rounded-xl px-4 py-3 text-sm text-slate-200 pl-10">
+                        <i class="fab fa-youtube absolute left-3.5 top-3.5 text-red-500 text-lg"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameters Setup Card -->
+            <div class="glass-card rounded-2xl p-6 shadow-2xl space-y-6">
+                <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2 uppercase tracking-wide">
+                        <i class="fas fa-cogs text-brand-accent text-indigo-500"></i> Pipeline Configuration
+                    </h3>
+                </div>
+
+                <!-- Grid Form Params -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Whisper Model</label>
+                        <select id="model-size" class="w-full glow-input rounded-xl px-3 py-2.5 text-xs text-slate-200 bg-slate-950/80">
+                            <option value="tiny" selected>Tiny (Fastest - 39MB)</option>
+                            <option value="base">Base (Balanced - 74MB)</option>
+                            <option value="small">Small (Recommended - 244MB)</option>
+                            <option value="medium">Medium (Accurate - 769MB)</option>
+                            <option value="large-v2">Large-v2 (Ultra - 1.5GB)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Max Sliced Clips</label>
+                        <select id="max-clips" class="w-full glow-input rounded-xl px-3 py-2.5 text-xs text-slate-200 bg-slate-950/80">
+                            <option value="1">1 Sliced Clip</option>
+                            <option value="2" selected>Up to 2 Clips</option>
+                            <option value="4">Up to 4 Clips</option>
+                            <option value="6">Up to 6 Clips</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Min Clip Duration</label>
+                        <div class="relative">
+                            <input id="min-dur" type="number" value="10" min="5" max="120" class="w-full glow-input rounded-xl px-4 py-2 text-xs text-slate-200 bg-slate-950/80">
+                            <span class="absolute right-3.5 top-2.5 text-[10px] text-slate-500 font-semibold font-mono">Secs</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">Max Clip Duration</label>
+                        <div class="relative">
+                            <input id="max-dur" type="number" value="30" min="10" max="300" class="w-full glow-input rounded-xl px-4 py-2 text-xs text-slate-200 bg-slate-950/80">
+                            <span class="absolute right-3.5 top-2.5 text-[10px] text-slate-500 font-semibold font-mono">Secs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Launch CTA -->
+                <button id="btn-submit" onclick="startPipeline()" class="w-full py-4 rounded-xl font-bold text-sm text-white glow-btn shadow-indigo-500/20 flex items-center justify-center gap-2">
+                    <i class="fas fa-wand-magic-sparkles"></i> Process & Generate Shorts
+                </button>
+            </div>
+
+        </section>
+
+        <!-- Right Panel: Logs Terminal & Video Gallery (lg:col-span-7) -->
+        <section class="lg:col-span-7 space-y-6">
+            
+            <!-- Live Monitor Section -->
+            <div id="status-card" class="glass-card rounded-2xl p-6 shadow-2xl hidden relative overflow-hidden">
+                <!-- Glowing border/accent on active run -->
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+
+                <div class="flex items-start justify-between mb-4 border-b border-white/5 pb-4">
+                    <div>
+                        <h4 class="font-bold text-base text-slate-200" id="status-title">Uploading video...</h4>
+                        <span class="text-[10px] font-mono text-slate-500" id="task-id-lbl">Task ID: -</span>
+                    </div>
+                    <div id="status-badge" class="px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-slate-950 border border-white/5 text-slate-500 flex items-center gap-1.5">
+                        <span class="h-1.5 w-1.5 rounded-full bg-slate-500 animate-pulse"></span> PENDING
+                    </div>
+                </div>
+
+                <!-- Progress Bar UI -->
+                <div class="space-y-1.5 mb-6">
+                    <div class="flex justify-between text-xs font-semibold text-slate-400">
+                        <span>Pipeline Progress</span>
+                        <span id="progress-lbl">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-950 border border-white/5 rounded-full h-3 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Developer Log Terminal console -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span><i class="fas fa-terminal mr-1 text-indigo-400"></i> Event Stream Logs</span>
+                        <span class="font-mono text-slate-500 text-[9px] animate-pulse">● Listen active</span>
+                    </div>
+                    <div id="log-console" class="h-60 rounded-xl bg-slate-950 border border-white/5 p-4 font-mono text-xs text-emerald-400/90 overflow-y-auto space-y-1.5 shadow-inner">
+                        <div class="text-slate-500">// Terminal console active. Send task commands above.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clips Grid Outputs Section -->
+            <div id="results-card" class="glass-card rounded-2xl p-6 shadow-2xl hidden space-y-6 relative overflow-hidden">
+                <!-- Accent glowing border -->
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+
+                <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2 uppercase tracking-wide">
+                        <i class="fas fa-sparkles text-emerald-400"></i> AI Generated Slices
+                    </h3>
+                </div>
+                
+                <div id="clips-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Sliced cards appended here -->
+                </div>
+            </div>
+
+            <!-- History Archive Gallery -->
+            <div class="glass-card rounded-2xl p-6 shadow-2xl space-y-4">
+                <div class="flex items-center justify-between border-b border-white/5 pb-3">
+                    <h3 class="font-bold text-sm text-slate-200 flex items-center gap-2 uppercase tracking-wide">
+                        <i class="fas fa-box-archive text-slate-400"></i> Video Catalog Archive
+                    </h3>
+                    <button onclick="refreshClips()" class="text-slate-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg border border-white/5">
+                        <i class="fas fa-arrows-rotate text-xs"></i> Refresh
+                    </button>
+                </div>
+                
+                <div id="gallery-container" class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-[460px] overflow-y-auto pr-1">
+                    <!-- Historical items populated dynamically -->
+                    <div class="text-slate-500 text-xs text-center py-10 col-span-3">No processed clips found. Start a generation above.</div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- UI Interaction Logic -->
+    <script>
+        let currentTab = 'upload';
+        let selectedFile = null;
+        let activeTaskId = null;
+        let pollInterval = null;
+
+        // Init loads tokens and inputs
+        window.addEventListener('DOMContentLoaded', () => {
+            const storedHf = localStorage.getItem('HF_TOKEN');
+            const storedGroq = localStorage.getItem('GROQ_KEY');
+            if (storedHf) document.getElementById('hf-token').value = storedHf;
+            if (storedGroq) document.getElementById('groq-key').value = storedGroq;
+            
+            // Drag and drop setup
+            const dropzone = document.getElementById('dropzone');
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('border-indigo-500', 'bg-indigo-500/5');
+            });
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('border-indigo-500', 'bg-indigo-500/5');
+            });
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('border-indigo-500', 'bg-indigo-500/5');
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    setFile(e.dataTransfer.files[0]);
+                }
+            });
+            dropzone.addEventListener('click', () => {
+                document.getElementById('file-input').click();
+            });
+
+            refreshClips();
+        });
+
+        // Tabs switching layout
+        function switchTab(tab) {
+            currentTab = tab;
+            const tUpload = document.getElementById('tab-upload');
+            const tYoutube = document.getElementById('tab-youtube');
+            const pUpload = document.getElementById('panel-upload');
+            const pYoutube = document.getElementById('panel-youtube');
+
+            if (tab === 'upload') {
+                tUpload.className = "flex-1 py-2.5 text-center rounded-lg font-bold text-xs text-white transition-all bg-indigo-600/90 shadow-md";
+                tYoutube.className = "flex-1 py-2.5 text-center rounded-lg font-bold text-xs text-slate-400 hover:text-white transition-all";
+                pUpload.classList.remove('hidden');
+                pYoutube.classList.add('hidden');
+            } else {
+                tYoutube.className = "flex-1 py-2.5 text-center rounded-lg font-bold text-xs text-white transition-all bg-indigo-600/90 shadow-md";
+                tUpload.className = "flex-1 py-2.5 text-center rounded-lg font-bold text-xs text-slate-400 hover:text-white transition-all";
+                pYoutube.classList.remove('hidden');
+                pUpload.classList.add('hidden');
+            }
+        }
+
+        function toggleVisibility(id) {
+            const input = document.getElementById(id);
+            const eye = document.getElementById(id + '-eye');
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'text' ? input.type = 'password' : null;
+                eye.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function handleFileSelect(e) {
+            if (e.target.files && e.target.files[0]) {
+                setFile(e.target.files[0]);
+            }
+        }
+
+        function setFile(file) {
+            if (!file.name.endsWith('.mp4')) {
+                alert("Please select an MP4 video file.");
+                return;
+            }
+            selectedFile = file;
+            document.getElementById('selected-filename').innerText = `${file.name} (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+            document.getElementById('file-details').classList.remove('hidden');
+        }
+
+        function clearSelectedFile() {
+            selectedFile = null;
+            document.getElementById('file-input').value = '';
+            document.getElementById('file-details').classList.add('hidden');
+        }
+
+        // Action Trigger
+        async function startPipeline() {
+            const hfToken = document.getElementById('hf-token').value;
+            const groqKey = document.getElementById('groq-key').value;
+            const modelSize = document.getElementById('model-size').value;
+            const maxClips = document.getElementById('max-clips').value;
+            const minDur = document.getElementById('min-dur').value;
+            const maxDur = document.getElementById('max-dur').value;
+
+            localStorage.setItem('HF_TOKEN', hfToken);
+            localStorage.setItem('GROQ_KEY', groqKey);
+
+            if (currentTab === 'upload') {
+                if (!selectedFile) {
+                    alert("Please select a video file to upload!");
+                    return;
+                }
+                showStatusCard("Uploading video file...", 5);
+                
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+                
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (!response.ok) throw new Error("Upload process failed.");
+                    const data = await response.json();
+                    
+                    activeTaskId = data.task_id;
+                    document.getElementById('task-id-lbl').innerText = `Task ID: ${activeTaskId}`;
+                    
+                    triggerProcess(activeTaskId, hfToken, groqKey, minDur, maxDur, modelSize, maxClips);
+                    startPolling(activeTaskId);
+                } catch (e) {
+                    showError(e.message);
+                }
+            } else {
+                const youtubeUrl = document.getElementById('youtube-url').value.trim();
+                if (!youtubeUrl) {
+                    alert("Please enter a YouTube video link!");
+                    return;
+                }
+                showStatusCard("Connecting to YouTube...", 10);
+                
+                const formData = new FormData();
+                formData.append("url", youtubeUrl);
+                
+                try {
+                    const response = await fetch('/api/youtube', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (!response.ok) throw new Error("YouTube fetch request failed.");
+                    const data = await response.json();
+                    
+                    activeTaskId = data.task_id;
+                    document.getElementById('task-id-lbl').innerText = `Task ID: ${activeTaskId}`;
+                    
+                    startPolling(activeTaskId, { hfToken, groqKey, minDur, maxDur, modelSize, maxClips });
+                } catch (e) {
+                    showError(e.message);
+                }
+            }
+        }
+
+        async function triggerProcess(taskId, hfToken, groqKey, minDur, maxDur, modelSize, maxClips) {
+            const formData = new FormData();
+            formData.append("hf_token", hfToken || "your_huggingface_token_here");
+            formData.append("groq_key", groqKey || "your_groq_api_key_here");
+            formData.append("min_dur", minDur);
+            formData.append("max_dur", maxDur);
+            formData.append("model_size", modelSize);
+            formData.append("max_clips", maxClips);
+            
+            try {
+                const response = await fetch(`/api/process/${taskId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error("Could not initialize processing pipeline.");
+            } catch (e) {
+                showError(e.message);
+            }
+        }
+
+        function startPolling(taskId, processParams = null) {
+            if (pollInterval) clearInterval(pollInterval);
+            
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/status/${taskId}`);
+                    if (!response.ok) throw new Error("Lost connection to API.");
+                    const task = await response.json();
+
+                    updateStatusUI(task);
+
+                    if (task.status === 'idle' && processParams) {
+                        const { hfToken, groqKey, minDur, maxDur, modelSize, maxClips } = processParams;
+                        processParams = null; // single trigger safeguard
+                        updateStatusTitle("Download success. Launching AI models...");
+                        triggerProcess(taskId, hfToken, groqKey, minDur, maxDur, modelSize, maxClips);
+                    }
+
+                    if (task.status === 'completed' || task.status === 'failed') {
+                        clearInterval(pollInterval);
+                        pollInterval = null;
+                        refreshClips();
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }, 1000);
+        }
+
+        function showStatusCard(title, progress) {
+            document.getElementById('status-card').classList.remove('hidden');
+            document.getElementById('results-card').classList.add('hidden');
+            updateStatusTitle(title);
+            updateProgressBar(progress);
+            
+            const consoleBox = document.getElementById('log-console');
+            consoleBox.innerHTML = `<div class="text-slate-500">// Launching task monitor process...</div>`;
+        }
+
+        function updateStatusTitle(title) {
+            document.getElementById('status-title').innerText = title;
+        }
+
+        function updateProgressBar(progress) {
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-lbl').innerText = `${progress}%`;
+        }
+
+        function updateStatusUI(task) {
+            const badge = document.getElementById('status-badge');
+            const status = task.status;
+            
+            updateProgressBar(task.progress);
+
+            if (status === 'downloading') {
+                badge.className = "px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center gap-1.5";
+                badge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-sky-400 animate-ping"></span> DOWNLOADING`;
+                updateStatusTitle("Streaming YouTube file...");
+            } else if (status === 'running') {
+                badge.className = "px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center gap-1.5";
+                badge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse"></span> PROCESSING`;
+                updateStatusTitle("Running Whisper models & cutting audio...");
+            } else if (status === 'completed') {
+                badge.className = "px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 text-emerald-450 text-emerald-400 flex items-center gap-1.5";
+                badge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> COMPLETED`;
+                updateStatusTitle("Shorts generated successfully!");
+                displayResults(task.clips);
+            } else if (status === 'failed') {
+                badge.className = "px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-1.5";
+                badge.innerHTML = `<span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> FAILED`;
+                updateStatusTitle("Pipeline error occurred.");
+            }
+
+            // Log Console Populate
+            const consoleBox = document.getElementById('log-console');
+            consoleBox.innerHTML = '';
+            task.logs.forEach(log => {
+                const line = document.createElement('div');
+                if (log.includes('PIPELINE ERROR') || log.includes('failed')) {
+                    line.className = 'text-red-400 font-semibold';
+                    line.innerHTML = `<span class="text-red-500">✗</span> ${log}`;
+                } else if (log.includes('--- Slicing') || log.includes('Saved final clip')) {
+                    line.className = 'text-purple-400 font-semibold';
+                    line.innerHTML = `<span class="text-purple-400">❖</span> ${log}`;
+                } else if (log.includes('completed successfully')) {
+                    line.className = 'text-emerald-400 font-semibold';
+                    line.innerHTML = `<span class="text-emerald-400">✓</span> ${log}`;
+                } else {
+                    line.className = 'text-slate-300';
+                    line.innerHTML = `<span class="text-slate-600">›</span> ${log}`;
+                }
+                consoleBox.appendChild(line);
+            });
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        function showError(message) {
+            clearInterval(pollInterval);
+            const badge = document.getElementById('status-badge');
+            badge.className = "px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest bg-red-500/10 border border-red-500/20 text-red-400 flex items-center gap-1.5";
+            badge.innerHTML = `ERROR`;
+            updateStatusTitle(message);
+        }
+
+        function displayResults(clips) {
+            const resultsCard = document.getElementById('results-card');
+            const grid = document.getElementById('clips-grid');
+            grid.innerHTML = '';
+            
+            if (!clips || clips.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-slate-500 text-xs text-center py-8">Task finished but zero clips matched the given filters.</div>`;
+                resultsCard.classList.remove('hidden');
+                return;
+            }
+            
+            clips.forEach(clip => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-950 border border-white/5 rounded-2xl overflow-hidden shadow-lg flex flex-col group hover:border-indigo-500/30 transition-all duration-300";
+                card.innerHTML = `
+                    <div class="aspect-[9/16] relative bg-black flex items-center justify-center overflow-hidden">
+                        <video controls class="w-full h-full object-cover">
+                            <source src="/output/${clip.filename}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-indigo-500/10 border border-indigo-500/10 text-indigo-400 text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full">Score: ${(clip.score * 100).toFixed(0)}%</span>
+                                <span class="text-[10px] font-mono text-slate-500"><i class="far fa-clock"></i> ${clip.duration}s</span>
+                            </div>
+                            <h4 class="font-bold text-xs text-slate-200 line-clamp-2" title="${clip.title}">${clip.title}</h4>
+                            <p class="text-[10px] text-slate-500 font-semibold font-mono">Index: ${clip.start}s - ${clip.end}s</p>
+                        </div>
+                        <a href="/output/${clip.filename}" download="${clip.filename}" class="w-full py-2.5 rounded-xl text-center bg-white/5 border border-white/5 hover:bg-indigo-600 hover:border-indigo-600 hover:text-white transition-all text-xs font-bold flex items-center justify-center gap-1.5 text-slate-300">
+                            <i class="fas fa-download"></i> Save to Computer
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            resultsCard.classList.remove('hidden');
+            resultsCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fetch historical list
+        async function refreshClips() {
+            try {
+                const response = await fetch('/api/clips');
+                if (!response.ok) throw new Error("Could not download gallery list.");
+                const clips = await response.json();
+                
+                const container = document.getElementById('gallery-container');
+                container.innerHTML = '';
+                
+                if (clips.length === 0) {
+                    container.innerHTML = `<div class="text-slate-500 text-xs text-center py-8 col-span-3">No processed video assets.</div>`;
+                    return;
+                }
+                
+                clips.forEach(clip => {
+                    const box = document.createElement('div');
+                    box.className = "bg-slate-950/60 border border-white/5 rounded-xl p-2.5 flex flex-col justify-between hover:bg-white/5 hover:border-indigo-500/20 transition-all shadow-md group";
+                    let displayTitle = clip.filename.replace(/_[a-f0-9]{8}_\d+\.mp4$/, '').replace(/_/g, ' ');
+                    if (displayTitle.length > 25) displayTitle = displayTitle.substring(0, 22) + '...';
+                    
+                    box.innerHTML = `
+                        <div class="aspect-[9/16] relative bg-slate-950 rounded-lg overflow-hidden flex items-center justify-center border border-white/5 mb-2 group-hover:border-white/10 transition-colors">
+                            <video class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" preload="metadata">
+                                <source src="${clip.url}" type="video/mp4">
+                            </video>
+                            <div onclick="playGalleryVideo('${clip.url}')" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all duration-300">
+                                <div class="h-9 w-9 rounded-full bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/50"><i class="fas fa-play text-xs pl-0.5"></i></div>
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <h5 class="text-[10px] font-bold text-slate-300 truncate" title="${clip.filename}">${displayTitle}</h5>
+                            <div class="flex items-center justify-between text-[9px] text-slate-500 font-mono">
+                                <span>${(clip.size / 1024 / 1024).toFixed(1)} MB</span>
+                                <a href="${clip.url}" download="${clip.filename}" class="text-indigo-400 hover:text-white transition-colors"><i class="fas fa-download"></i></a>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(box);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function playGalleryVideo(url) {
+            const resultsCard = document.getElementById('results-card');
+            const grid = document.getElementById('clips-grid');
+            
+            grid.innerHTML = `
+                <div class="col-span-2 bg-slate-950 border border-white/5 rounded-2xl overflow-hidden shadow-2xl p-4 flex flex-col md:flex-row gap-6 max-w-xl mx-auto w-full border-indigo-500/20">
+                    <div class="w-full md:w-1/2 aspect-[9/16] bg-black rounded-xl overflow-hidden border border-white/5">
+                        <video controls class="w-full h-full object-cover" autoplay>
+                            <source src="${url}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="w-full md:w-1/2 flex flex-col justify-between py-2">
+                        <div class="space-y-2">
+                            <span class="inline-block bg-indigo-500/10 border border-indigo-500/10 text-indigo-400 text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full">Archive View</span>
+                            <h4 class="font-bold text-sm text-slate-200 break-words">${url.split('/').pop().replace(/_[a-f0-9]{8}_\d+\.mp4$/, '').replace(/_/g, ' ')}</h4>
+                            <p class="text-xs text-slate-500">Streaming selected video asset from your database collection.</p>
+                        </div>
+                        <a href="${url}" download class="w-full py-2.5 rounded-xl text-center bg-indigo-600 font-bold text-xs text-white hover:bg-indigo-500 transition-colors flex items-center justify-center gap-1.5 mt-6">
+                            <i class="fas fa-download"></i> Download Video
+                        </a>
+                    </div>
+                </div>
+            `;
+            resultsCard.classList.remove('hidden');
+            resultsCard.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
